@@ -60,8 +60,8 @@
 
 - set_fact:
     default_environment:
-      UID: '{{user_info.uid}}'
-      GID: '{{user_info.group}}'
+      PUID: '{{user_info.uid}}'
+      PGID: '{{user_info.group}}'
 
 - docker_container:
     name: "{{ _container_name }}"
