@@ -111,6 +111,7 @@
 - ufw:
     rule: allow
     port: '{{ item.hostport }}'
+    comment: '{{ _container_name }}'
   loop:
     "{{ ports }}"
 
