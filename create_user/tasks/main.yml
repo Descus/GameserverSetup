@@ -1,0 +1,36 @@
+---
+- name: Create new user
+  user:
+    name: "{{user}}"
+    shell: /bin/bash
+
+- name: Create new user
+  user:
+    name: "{{user}}"
+    groups: sudo
+    append: yes
+    shell: /bin/bash
+  when: sudo |bool
+
+- name: Create .ssh folder
+  file:
+    path: "~{{user}}/.ssh"
+    state: directory
+    owner: "{{user}}"
+    group: "{{user}}"
+    mode: 0700
+
+- name: Create authorized_keys
+  copy:
+    content: ""
+    dest: "~{{user}}/.ssh/authorized_keys"
+    force: no
+    owner: "{{user}}"
+    group: "{{user}}"
+    mode: 0600
+
+- copy:
+    src: /root/.ssh/authorized_keys
+    dest: /home/{{user}}/.ssh/authorized_keys
+    remote_src: yes
+  diff: yes

@@ -1,0 +1,11 @@
+---
+container_name: "{{ user_name }}"
+volumes: []
+mappings: []
+env: {}
+memory: 6G
+reserved_memory: 4G
+cpu_cores: 0-3
+restart_policy: unless-stopped
+local: false
+local_path: "/"

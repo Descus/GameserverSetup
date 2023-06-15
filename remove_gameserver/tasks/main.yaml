@@ -1,0 +1,29 @@
+---
+- user:
+    name: "{{ user_name }}"
+    remove: true
+
+- file:
+    src: "/home/{{ user_name }}/"
+    state: absent
+
+- docker_container:
+    name: "{{ container_name }}"
+    state: absent
+
+- docker_image:
+    name: "{{ image_name }}"
+    state: absent
+  when: image_name is defined
+
+- lineinfile:
+   path: /etc/crontab
+   line: "0 4   * * *   root  docker restart {{ container_name }}"
+   state: absent
+
+- ufw:
+    delete: true
+    rule: allow
+    port: '{{ item }}'
+  loop:
+    "{{ ports }}"

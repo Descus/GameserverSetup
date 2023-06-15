@@ -1,0 +1,116 @@
+---
+- set_fact:
+    _container_name: "{{ container_name }}"
+
+- set_fact:
+    _volumes: |
+      {% for item in volumes + mappings %}
+      - {{ item.dest }}:{{ item.src }}
+      {% endfor %}
+
+- set_fact:
+    _ports: |
+      {%- for item in ports -%}
+      - {{ item.hostport }}:{{ item.containerport }}/{{ item.protocol }}
+      {% endfor %}
+
+- include_role:
+      name: create_user
+  vars:
+      user: "{{ user_name }}"
+      sudo: no
+
+- user:
+      name: "{{ user_name }}"
+      groups:
+          - docker
+      append: yes
+
+- include_role:
+      name: setup_docker
+
+- apt:
+    name:
+      - xdotool
+    state: latest
+    update_cache: true
+
+- docker_image:
+    name: "{{ image_name }}"
+    source: pull
+  when: not local
+
+- docker_image:
+    name: "{{ image_name }}"
+    source: build
+    build:
+      path: "{{ local_path }}"
+  when: local
+
+- docker_volume:
+    name: "{{ item.dest }}"
+  loop:
+    "{{ volumes }}"
+  when:
+    - volumes is defined
+
+- user:
+    name: "{{ user_name }}"
+  register: user_info
+
+- set_fact:
+    default_environment:
+      UID: '{{user_info.uid}}'
+      GID: '{{user_info.group}}'
+
+- docker_container:
+    name: "{{ _container_name }}"
+    image: "{{ image_name }}"
+    state: started
+    interactive: true
+    tty: true
+    published_ports: "{{ _ports| from_yaml }}"
+    volumes: "{{ _volumes| from_yaml }}"
+    env: "{{ default_environment | combine(env) }}"
+    memory: "{{ memory }}"
+    memory_reservation: "{{ reserved_memory }}"
+    cpuset_cpus: "{{ cpu_cores }}"
+    restart_policy: "{{ restart_policy }}"
+  become: yes
+  become_user: "{{ user_name }}"
+  when: _volumes is defined
+
+- docker_container:
+    name: "{{ _container_name }}"
+    image: "{{ image_name }}"
+    state: started
+    interactive: true
+    tty: true
+    published_ports: "{{ _ports| from_yaml }}"
+    env: "{{ default_environment | combine(env) }}"
+    memory: "{{ memory }}"
+    memory_reservation: "{{ reserved_memory }}"
+    cpuset_cpus: "{{ cpu_cores }}"
+    restart_policy: "{{ restart_policy }}"
+  become: yes
+  become_user: "{{ user_name }}"
+  when: _volumes is not defined
+
+- lineinfile:
+    path: "/home/{{ user_name }}/.bashrc"
+    line: "docker attach {{ _container_name }}"
+
+- lineinfile:
+    path: "/home/{{ user_name }}/.bash_logout"
+    line: xdotool key ctrl+p ctrl+q
+
+- lineinfile:
+    path: /etc/crontab
+    line: "0 4   * * *   root  docker restart {{ _container_name }}"
+
+- ufw:
+    rule: allow
+    port: '{{ item.hostport }}'
+  loop:
+    "{{ ports }}"
+

@@ -1,0 +1,66 @@
+---
+argument_specs:
+  main:
+    options:
+      user_name:
+        type: "str"
+        required: true
+        description: "Username for the Server User"
+      container_name:
+        type: "str"
+        required: false
+        default: user_name
+        description: "Container Name"
+      image_name:
+        type: "str"
+        required: true
+        description: "Docker Image to Download"
+      volumes:
+        type: "list"
+        required: false
+        default: []
+        description: "The Docker Volumes src:dest:access"
+      mappings:
+        type: "list"
+        required: false
+        default: []
+        description: "The Docker Mappings src:dest:access"
+      ports:
+        type: "list"
+        required: true
+        description: "The Port mappings hostport:containerport/protocol"
+      env:
+        type: "dict"
+        required: false
+        default: {}
+        description: "Environment Variables for the Docker Container"
+      memory:
+        type: "str"
+        required: false
+        default: 6G
+        description: "Memory Allocation for the Docker Container"
+      reserved_memory:
+        type: "str"
+        required: false
+        default: 4G
+        description: "Memory Reservation for the Docker Container"
+      cpu_cores:
+        type: "str"
+        required: false
+        default: 0-3
+        description: "CPU Reservation for the Docker Container"
+      restart_policy:
+        type: "str"
+        required: false
+        default: unless-stopped
+        description: "Restart Policy for the Docker Container"
+      local:
+        type: "bool"
+        required: false
+        default: false
+        description: "is the Docker image stored locally"
+      local_path:
+        type: "str"
+        required: false
+        default: "/"
+        description: "Local Docker Image path"
