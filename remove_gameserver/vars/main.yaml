@@ -1,2 +1,2 @@
 ---
-  container_name: {{ user_name }}
+  container_name: "{{ user_name }}"
