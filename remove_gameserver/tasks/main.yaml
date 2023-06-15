@@ -4,7 +4,7 @@
     remove: true
 
 - file:
-    src: "/home/{{ user_name }}/"
+    path: "/home/{{ user_name }}/"
     state: absent
 
 - docker_container:
