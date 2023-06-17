@@ -1,32 +1,45 @@
 ---
+- gather_facts:
+
 - apt:
     name:
-      - apt-transport-https
       - ca-certificates
-      - lsb-release
+      - curl
       - gnupg
+      - lsb-release
     state: latest
     update_cache: true
+
+- command: dpkg --print-architecture
+  register: architecture
+
+- set_fact:
+    key_file: /etc/apt/trusted.gpg.d/docker.gpg
 
 - apt_key:
     url: "https://download.docker.com/linux/{{ ansible_distribution | lower }}/gpg"
     state: present
+    keyring: "{{ key_file }}"
 
 - apt_repository:
-    repo: "deb [arch={{ ansible_architecture }}] https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable"
+    repo: "deb [arch={{ architecture.stdout }} signed-by={{ key_file }}] https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable"
     state: present
     filename: docker
 
 - name: Install Docker
   apt:
     name:
-      - docker
-      - docker.io
-      - docker-compose
-      - docker-registry
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-buildx-plugin
+      - docker-compose-plugin
     state: latest
     update_cache: true
 
 - pip:
     name: docker
+    state: present
+- pip:
+    name: docker-compose
     state: present
