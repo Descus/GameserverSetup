@@ -29,6 +29,7 @@
 - include_role:
       name: setup_docker
   tags:
+    - never
     - with_docker
 
 - apt:
