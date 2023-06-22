@@ -9,3 +9,4 @@ cpu_cores: 0-3
 restart_policy: unless-stopped
 local: false
 local_path: "/"
+build_args: {}
