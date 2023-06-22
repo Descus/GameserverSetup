@@ -1,4 +1,6 @@
 ---
+- set_fact:
+    start_time: "{{ now(True, '%Y-%m-%d %H:%M:%S') }}"
 - user:
     name: "{{ user_name }}"
     state: absent
@@ -28,3 +30,9 @@
     port: '{{ item }}'
   loop:
     "{{ ports }}"
+
+- set_fact:
+    end_time: "{{ now(True, '%Y-%m-%d %H:%M:%S') }}"
+
+- set_fact:
+    role_return: {time_diff: "{{ ((end_time |to_datetime) - (start_time |to_datetime)).total_seconds()|int }}"}
