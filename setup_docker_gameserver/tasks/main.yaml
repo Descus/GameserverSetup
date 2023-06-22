@@ -126,3 +126,6 @@
     role_return:
       time_diff: "{{ ((end_time |to_datetime) - (start_time |to_datetime)).total_seconds()|int }}"
 
+- debug:
+        msg: "{{ role_return }}"
+
