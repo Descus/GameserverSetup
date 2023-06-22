@@ -119,15 +119,10 @@
   loop:
     "{{ ports }}"
 
-- debug:
-        msg: "Hey!"
-
 - set_fact:
     end_time: "{{ now(True, '%Y-%m-%d %H:%M:%S') }}"
 
 - set_fact:
     role_return: {time_diff: "{{ ((end_time |to_datetime) - (start_time |to_datetime)).total_seconds()|int }}"}
 
-- debug:
-        msg: "{{ role_return }}"
 
