@@ -119,6 +119,9 @@
   loop:
     "{{ ports }}"
 
+- debug:
+        msg: "Hey!"
+
 - set_fact:
     end_time: "{{ now(True, '%Y-%m-%d %H:%M:%S') }}"
 
