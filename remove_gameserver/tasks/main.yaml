@@ -1,15 +1,4 @@
 ---
-- set_fact:
-    start_time: "{{ now(True, '%Y-%m-%d %H:%M:%S') }}"
-- user:
-    name: "{{ user_name }}"
-    state: absent
-    remove: true
-
-- file:
-    path: "/home/{{ user_name }}/"
-    state: absent
-
 - docker_container:
     name: "{{ container_name }}"
     state: absent
@@ -18,6 +7,10 @@
     name: "{{ image_name }}"
     state: absent
   when: image_name is defined
+
+- file:
+    path: "/home/{{ user_name }}/"
+    state: absent
 
 - lineinfile:
    path: /etc/crontab
@@ -31,8 +24,3 @@
   loop:
     "{{ ports }}"
 
-- set_fact:
-    end_time: "{{ now(True, '%Y-%m-%d %H:%M:%S') }}"
-
-- set_fact:
-    role_return: {time_diff: "{{ ((end_time |to_datetime) - (start_time |to_datetime)).total_seconds()|int }}"}
