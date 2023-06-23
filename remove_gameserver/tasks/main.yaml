@@ -8,6 +8,11 @@
     state: absent
   when: image_name is defined
 
+- user:
+    name: "{{ user_name }}"
+    state: absent
+    remove: true
+
 - file:
     path: "/home/{{ user_name }}/"
     state: absent
