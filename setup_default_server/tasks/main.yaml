@@ -1,4 +1,17 @@
 ---
+- apt:
+    update_cache: yes
+    upgrade: yes
+
+- apt:
+    name: sudo
+    state: present
+
+
+- apt:
+    name: python3-pip
+    state: present
+
 - lineinfile:
         dest: /etc/sudoers
         state: present
@@ -7,7 +20,7 @@
         validate: 'visudo -cf %s'
 
 - copy:
-    src: ./ssh/authorized_keys
+    src: ./authorized_keys
     dest: /root/.ssh/authorized_keys
   notify:
     - restart_sshd

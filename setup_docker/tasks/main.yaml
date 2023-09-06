@@ -40,6 +40,5 @@
 - pip:
     name: docker
     state: present
-- pip:
-    name: docker-compose
-    state: present
+    extra_args: '--break-system-packages'
+
